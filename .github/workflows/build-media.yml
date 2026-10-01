@@ -1,0 +1,30 @@
+name: Build Stellar Express Media
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  build-media:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build muted travel videos and landing video
+        run: |
+          ffmpeg -y -i arrival.mp4 -an -c:v libx264 -preset medium -crf 23 -movflags +faststart arrival_muted.mp4
+          ffmpeg -y -i star_loop.mp4 -an -c:v libx264 -preset medium -crf 23 -movflags +faststart star_loop_muted.mp4
+          ffmpeg -y -loop 1 -i landing.png -vf "scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080,zoompan=z='min(zoom+0.0008,1.08)':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d=168:s=1920x1080:fps=24,fade=t=in:st=0:d=0.8,fade=t=out:st=6.2:d=0.8" -t 7 -an -c:v libx264 -preset medium -crf 23 -pix_fmt yuv420p -movflags +faststart landing.mp4
+
+      - name: Commit generated media
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add arrival_muted.mp4 star_loop_muted.mp4 landing.mp4
+          git diff --cached --quiet || git commit -m "Build Stellar Express media [skip ci]"
+          git push
