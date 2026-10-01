@@ -42,7 +42,7 @@ button{font:inherit}.screen{position:absolute;inset:0}.hidden{display:none!impor
   </section>
 
   <section id="landing" class="screen hidden">
-    <video id="landingVideo" class="landing-bg" src="landing.mp4" playsinline muted preload="auto"></video>
+    <img class="landing-bg" src="landing.png" alt="รถไฟดวงดาวจอดบนสถานีเหนือดาวเคราะห์">
     <div class="landing-shade"></div>
     <div class="scene">
       <div class="badge">STELLAR EXPRESS // ARRIVAL</div>
@@ -62,9 +62,9 @@ button{font:inherit}.screen{position:absolute;inset:0}.hidden{display:none!impor
 </div>
 <script>
 const $=s=>document.querySelector(s);
-const home=$('#home'),seq=$('#sequence'),v1=$('#v1'),v2=$('#v2'),landing=$('#landing'),departure=$('#departure'),landingVideo=$('#landingVideo');
+const home=$('#home'),seq=$('#sequence'),v1=$('#v1'),v2=$('#v2'),landing=$('#landing'),departure=$('#departure');
 const skipArrival=$('#skipArrival'),landBtn=$('#landBtn'),status=$('#status');
-v1.src='arrival_muted.mp4'; v2.src='star_loop_muted.mp4'; v1.muted=true; v2.muted=true;
+v1.src='arrival.mp4'; v2.src='star_loop.mp4'; v1.muted=true; v2.muted=true;
 let transitioning=false;
 function show(el){el.classList.remove('hidden')} function hide(el){el.classList.add('hidden')}
 function fade(){const f=document.createElement('div');f.className='fade';$('#app').appendChild(f);setTimeout(()=>f.remove(),850)}
@@ -79,12 +79,12 @@ function beginTravel(){
   v1.pause();hide(v1);show(v2);status.textContent='STAR ROUTE // LOOP';show(landBtn);try{v2.play()}catch(e){}
 }
 function land(){
-  if(transitioning)return; transitioning=true; fade(); v2.pause();hide(seq);show(landing);landingVideo.currentTime=0;landingVideo.muted=true;landingVideo.play().catch(()=>{});setTimeout(()=>transitioning=false,850);
+  if(transitioning)return; transitioning=true; fade(); v2.pause();hide(seq);show(landing);setTimeout(()=>transitioning=false,850);
 }
 function reset(){fade();hide(departure);hide(landing);setTimeout(start,300)}
 v1.addEventListener('ended',beginTravel);
 $('#home').addEventListener('click',start);skipArrival.addEventListener('click',beginTravel);landBtn.addEventListener('click',land);
-$('#depart').addEventListener('click',()=>{fade();landingVideo.pause();hide(landing);show(departure)});$('#restart').addEventListener('click',reset);
+$('#depart').addEventListener('click',()=>{fade();hide(landing);show(departure)});$('#restart').addEventListener('click',reset);
 </script>
 </body>
 </html>
