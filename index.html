@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stellar Express — สำรวจดวงดาว</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#02030b;color:#fff;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+button{font:inherit}.screen{position:absolute;inset:0}.hidden{display:none!important}
+#app{position:relative;width:100vw;height:100vh;background:#02030b}
+#home{display:grid;place-items:center;cursor:pointer;background:radial-gradient(circle at 50% 45%,#101a43 0,#050818 42%,#010208 100%)}
+.stars{position:absolute;inset:0;background-image:radial-gradient(#fff 1px,transparent 1px);background-size:83px 83px;opacity:.45}.nebula{position:absolute;inset:0;background:radial-gradient(circle at 20% 30%,#7ca7ff22,transparent 28%),radial-gradient(circle at 80% 65%,#b58cff1a,transparent 25%)}
+#target{position:relative;width:90px;height:90px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#d8e7ff 18%,#8ebcff 45%,#4353c9 70%,#171b62);box-shadow:0 0 25px #9cc6ff,0 0 70px #6688ff,0 0 130px #475cff66;animation:pulse 1.6s ease-in-out infinite}
+#target:before{content:"";position:absolute;inset:-22px;border:1px solid #9fc1ff55;border-radius:50%;animation:orbit 4s linear infinite} @keyframes pulse{50%{transform:scale(1.12);filter:brightness(1.45)}} @keyframes orbit{to{transform:rotate(360deg)}}
+.prompt{position:absolute;top:65%;text-align:center;letter-spacing:.18em;text-transform:uppercase;font-size:12px;opacity:.8}
+#sequence{background:#000}.video{width:100%;height:100%;object-fit:cover;display:block}
+.fade{position:absolute;inset:0;background:#000;pointer-events:none;animation:fadein .8s ease-out forwards}@keyframes fadein{from{opacity:1}to{opacity:0}}
+.control{position:absolute;z-index:4;right:24px;top:20px;padding:10px 16px;border:1px solid #ffffff55;border-radius:20px;background:#07102ccc;color:#fff;cursor:pointer;backdrop-filter:blur(8px)}
+#landBtn{right:24px;bottom:24px;top:auto;background:#13275cee;border-color:#a9c7ff88;box-shadow:0 8px 35px #0008}
+#status{position:absolute;z-index:3;left:24px;bottom:24px;padding:8px 13px;border:1px solid #ffffff22;border-radius:999px;background:#07102caa;color:#c9d9ff;font-size:11px;letter-spacing:.16em;text-transform:uppercase}
+#landing{background:#050712}.landing-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.landing-shade{position:absolute;inset:0;background:linear-gradient(90deg,#03050dcc 0%,#03050d55 45%,#03050d22 100%)}
+.scene{position:absolute;z-index:2;left:7%;top:50%;transform:translateY(-50%);max-width:620px;padding:38px;border:1px solid #91b5ff44;background:#07102ccc;backdrop-filter:blur(12px);border-radius:24px;box-shadow:0 25px 80px #0008}.scene h1{font-size:clamp(34px,6vw,72px);margin:0 0 12px;letter-spacing:.06em}.scene p{opacity:.84;line-height:1.7}.badge{font-size:11px;letter-spacing:.25em;color:#9fc1ff}.btn{margin-top:20px;padding:13px 22px;border-radius:999px;border:1px solid #a9c7ff66;background:#13275ccc;color:white;cursor:pointer}.btn:hover,.control:hover{background:#1b3978}
+#departure{display:grid;place-items:center;background:radial-gradient(circle at 50% 45%,#15295b,#050817 60%,#010208)}
+@media(max-width:700px){.scene{left:5%;right:5%;max-width:none;padding:26px}.control{right:12px}.prompt{top:68%}}
+@media(prefers-reduced-motion:reduce){#target,#target:before{animation:none}}
+</style>
+</head>
+<body>
+<div id="app">
+  <section id="home" class="screen">
+    <div class="stars"></div><div class="nebula"></div>
+    <div id="target" aria-label="ดวงดาว"></div>
+    <div class="prompt">แตะดวงดาวเพื่อออกเดินทาง</div>
+  </section>
+
+  <section id="sequence" class="screen hidden" aria-label="การเดินทางด้วยรถไฟดวงดาว">
+    <video id="v1" class="video" playsinline preload="auto"></video>
+    <video id="v2" class="video hidden" playsinline loop preload="auto"></video>
+    <button id="skipArrival" class="control" type="button">ข้ามฉากรถไฟ</button>
+    <button id="landBtn" class="control hidden" type="button">🪐 ลงดาว</button>
+    <div id="status">ARRIVAL</div>
+  </section>
+
+  <section id="landing" class="screen hidden">
+    <img class="landing-bg" src="landing.png" alt="รถไฟดวงดาวจอดบนสถานีเหนือดาวเคราะห์">
+    <div class="landing-shade"></div>
+    <div class="scene">
+      <div class="badge">STELLAR EXPRESS // ARRIVAL</div>
+      <h1>ถึงดาวแล้ว</h1>
+      <p>รถไฟดวงดาวลงจอดอย่างปลอดภัย<br>ยินดีต้อนรับสู่โลกใบใหม่</p>
+      <button class="btn" id="depart" type="button">ออกเดินทางต่อ →</button>
+    </div>
+  </section>
+
+  <section id="departure" class="screen hidden">
+    <div class="scene" style="position:relative;left:auto;top:auto;transform:none;text-align:center">
+      <div class="badge">NEXT DESTINATION</div><h1>พร้อมออกเดินทาง</h1>
+      <p>กลับไปที่ดวงดาวเพื่อเริ่มการเดินทางครั้งใหม่</p>
+      <button class="btn" id="restart" type="button">กลับไปดูดวงดาวอีกครั้ง</button>
+    </div>
+  </section>
+</div>
+<script>
+const $=s=>document.querySelector(s);
+const home=$('#home'),seq=$('#sequence'),v1=$('#v1'),v2=$('#v2'),landing=$('#landing'),departure=$('#departure');
+const skipArrival=$('#skipArrival'),landBtn=$('#landBtn'),status=$('#status');
+v1.src='arrival.mp4'; v2.src='star_loop.mp4';
+let transitioning=false;
+function show(el){el.classList.remove('hidden')} function hide(el){el.classList.add('hidden')}
+function fade(){const f=document.createElement('div');f.className='fade';$('#app').appendChild(f);setTimeout(()=>f.remove(),850)}
+async function start(){
+  if(transitioning)return; transitioning=true; fade();
+  hide(home);hide(landing);hide(departure);show(seq);show(v1);hide(v2);hide(landBtn);status.textContent='ARRIVAL';
+  v1.currentTime=0; v2.pause();
+  try{await v1.play()}catch(e){}
+  transitioning=false;
+}
+function beginTravel(){
+  v1.pause();hide(v1);show(v2);status.textContent='STAR ROUTE // LOOP';show(landBtn);try{v2.play()}catch(e){}
+}
+function land(){
+  if(transitioning)return; transitioning=true; fade(); v2.pause();hide(seq);show(landing);setTimeout(()=>transitioning=false,850);
+}
+function reset(){fade();hide(departure);hide(landing);setTimeout(start,300)}
+v1.addEventListener('ended',beginTravel);
+$('#home').addEventListener('click',start);skipArrival.addEventListener('click',beginTravel);landBtn.addEventListener('click',land);
+$('#depart').addEventListener('click',()=>{fade();hide(landing);show(departure)});$('#restart').addEventListener('click',reset);
+</script>
+</body>
+</html>
